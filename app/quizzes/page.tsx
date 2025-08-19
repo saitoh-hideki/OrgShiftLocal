@@ -107,7 +107,7 @@ export default function QuizzesPage() {
         <h1 className="text-3xl font-bold mb-8">地域クイズ</h1>
 
         {/* フィルターセクション */}
-        <div className="bg-surface rounded-2xl p-6 mb-8">
+        <div className="bg-gray-50 rounded-2xl p-6 mb-8">
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
             {/* 検索 */}
             <div className="relative">

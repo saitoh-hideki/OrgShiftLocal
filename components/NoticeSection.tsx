@@ -32,7 +32,7 @@ export default function NoticeSection() {
             <a
               key={notice.id}
               href="#"
-              className="block p-3 hover:bg-surface rounded-lg transition-colors"
+              className="block p-3 hover:bg-gray-50 rounded-lg transition-colors"
             >
               <div className="flex justify-between items-start">
                 <p className="text-sm font-medium hover:text-primary transition-colors">
@@ -61,7 +61,7 @@ export default function NoticeSection() {
             <a
               key={notice.id}
               href="#"
-              className="block p-3 hover:bg-surface rounded-lg transition-colors"
+              className="block p-3 hover:bg-gray-50 rounded-lg transition-colors"
             >
               <div className="flex justify-between items-start">
                 <p className="text-sm font-medium hover:text-accent transition-colors">

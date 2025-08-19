@@ -91,7 +91,7 @@ export default function LocalQuizRail() {
 
   return (
     <div>
-      <div className="flex gap-2 mb-6 border-b border-border">
+      <div className="flex gap-2 mb-6 border-b border-gray-200">
         <button
           onClick={() => setActiveTab('gov')}
           className={`px-4 py-2 font-medium transition-colors relative ${

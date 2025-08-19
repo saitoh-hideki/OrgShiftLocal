@@ -128,7 +128,7 @@ export default function PartnerDashboard() {
                 className="card hover:shadow-xl transition-all group"
               >
                 <div className="flex items-start gap-4">
-                  <div className={`w-12 h-12 rounded-lg bg-surface flex items-center justify-center ${link.color}`}>
+                  <div className={`w-12 h-12 rounded-lg bg-gray-50 flex items-center justify-center ${link.color}`}>
                     <Icon className="w-6 h-6" />
                   </div>
                   <div className="flex-1">
@@ -148,14 +148,14 @@ export default function PartnerDashboard() {
         <div className="card">
           <h2 className="text-xl font-bold mb-4">最近の活動</h2>
           <div className="space-y-3">
-            <div className="flex items-center justify-between py-3 border-b border-border">
+            <div className="flex items-center justify-between py-3 border-b border-gray-200">
               <div>
                 <p className="font-medium">「パンの保存基礎」が10回受験されました</p>
                 <p className="text-sm text-gray-600">2時間前</p>
               </div>
               <span className="text-sm text-success">+10</span>
             </div>
-            <div className="flex items-center justify-between py-3 border-b border-border">
+            <div className="flex items-center justify-between py-3 border-b border-gray-200">
               <div>
                 <p className="font-medium">クーポンが1枚使用されました</p>
                 <p className="text-sm text-gray-600">5時間前</p>

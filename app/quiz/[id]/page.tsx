@@ -178,7 +178,7 @@ export default function QuizDetailPage() {
                       : JSON.stringify(userAnswer?.sort()) === JSON.stringify(question.answer?.sort())
 
                   return (
-                    <div key={question.id} className="p-4 bg-surface rounded-lg">
+                    <div key={question.id} className="p-4 bg-gray-50 rounded-lg">
                       <div className="flex items-start gap-3">
                         {isCorrect ? (
                           <Check className="w-5 h-5 text-success flex-shrink-0 mt-0.5" />
@@ -260,7 +260,7 @@ export default function QuizDetailPage() {
                 {currentQuestion.choices.map((choice, index) => (
                   <label
                     key={index}
-                    className="flex items-center gap-3 p-4 bg-surface rounded-lg cursor-pointer hover:bg-gray-100 transition-colors"
+                    className="flex items-center gap-3 p-4 bg-gray-50 rounded-lg cursor-pointer hover:bg-gray-100 transition-colors"
                   >
                     <input
                       type="radio"
@@ -281,7 +281,7 @@ export default function QuizDetailPage() {
                 {currentQuestion.choices.map((choice, index) => (
                   <label
                     key={index}
-                    className="flex items-center gap-3 p-4 bg-surface rounded-lg cursor-pointer hover:bg-gray-100 transition-colors"
+                    className="flex items-center gap-3 p-4 bg-gray-50 rounded-lg cursor-pointer hover:bg-gray-100 transition-colors"
                   >
                     <input
                       type="checkbox"

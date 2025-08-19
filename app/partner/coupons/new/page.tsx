@@ -172,11 +172,11 @@ export default function NewCouponPage() {
                 <p className="text-sm text-gray-600 mb-3">
                   選択しない場合は全てのクイズが対象になります
                 </p>
-                <div className="max-h-40 overflow-y-auto border border-border rounded-lg">
+                <div className="max-h-40 overflow-y-auto border border-gray-200 rounded-lg">
                   {quizzes.map((quiz) => (
                     <label
                       key={quiz.id}
-                      className="flex items-center gap-3 p-3 hover:bg-surface cursor-pointer border-b border-border last:border-b-0"
+                      className="flex items-center gap-3 p-3 hover:bg-gray-50 cursor-pointer border-b border-gray-200 last:border-b-0"
                     >
                       <input
                         type="checkbox"

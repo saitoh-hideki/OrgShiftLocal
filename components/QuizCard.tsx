@@ -61,7 +61,7 @@ export default function QuizCard({ quiz }: QuizCardProps) {
             {quiz.tags.slice(0, 3).map((tag) => (
               <span
                 key={tag}
-                className="inline-flex items-center gap-1 px-2 py-1 bg-surface text-xs rounded-full"
+                className="inline-flex items-center gap-1 px-2 py-1 bg-gray-50 text-xs rounded-full"
               >
                 <Tag className="w-3 h-3" />
                 {tag}
@@ -72,7 +72,7 @@ export default function QuizCard({ quiz }: QuizCardProps) {
 
         {/* 作成者 */}
         {quiz.org && (
-          <div className="pt-2 border-t border-border">
+          <div className="pt-2 border-t border-gray-200">
             <p className="text-xs text-gray-500">
               提供: {quiz.org.name}
             </p>

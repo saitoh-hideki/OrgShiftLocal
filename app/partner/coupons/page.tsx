@@ -129,7 +129,7 @@ export default function PartnerCouponsPage() {
 
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
                       {/* 条件 */}
-                      <div className="bg-surface rounded-lg p-3">
+                      <div className="bg-gray-50 rounded-lg p-3">
                         <h4 className="font-medium text-sm mb-1">獲得条件</h4>
                         <p className="text-sm text-gray-600">
                           {coupon.conditions.min_score && `${coupon.conditions.min_score}点以上`}
@@ -138,7 +138,7 @@ export default function PartnerCouponsPage() {
                       </div>
 
                       {/* 在庫 */}
-                      <div className="bg-surface rounded-lg p-3">
+                      <div className="bg-gray-50 rounded-lg p-3">
                         <h4 className="font-medium text-sm mb-1">在庫</h4>
                         <p className="text-sm text-gray-600">
                           {coupon.stock !== undefined ? `残り${coupon.stock}枚` : '無制限'}
@@ -146,7 +146,7 @@ export default function PartnerCouponsPage() {
                       </div>
 
                       {/* 期間 */}
-                      <div className="bg-surface rounded-lg p-3">
+                      <div className="bg-gray-50 rounded-lg p-3">
                         <h4 className="font-medium text-sm mb-1">配布期間</h4>
                         <p className="text-sm text-gray-600">
                           {coupon.starts_at && coupon.ends_at ? (

@@ -127,7 +127,7 @@ export default function PartnerQuizzesPage() {
                     <div className="flex items-center gap-3 mb-2">
                       <h3 className="text-lg font-bold">{quiz.title}</h3>
                       {getStatusBadge(quiz.status)}
-                      <span className="px-2 py-1 bg-surface text-xs rounded-full">
+                      <span className="px-2 py-1 bg-gray-50 text-xs rounded-full">
                         {getDifficultyLabel(quiz.difficulty)}
                       </span>
                     </div>
@@ -156,7 +156,7 @@ export default function PartnerQuizzesPage() {
                         {quiz.tags.map((tag) => (
                           <span
                             key={tag}
-                            className="px-2 py-1 bg-surface text-xs rounded-full"
+                            className="px-2 py-1 bg-gray-50 text-xs rounded-full"
                           >
                             {tag}
                           </span>
