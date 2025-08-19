@@ -42,20 +42,20 @@ export default function CurrentPrefPill() {
   return (
     <a 
       href="/regions" 
-      className="inline-flex items-center gap-3 rounded-xl border border-[#3A9BDC]/20 px-4 py-2 bg-gradient-to-r from-[#3A9BDC]/5 to-[#2E5D50]/5 hover:from-[#3A9BDC]/10 hover:to-[#2E5D50]/10 hover:border-[#3A9BDC]/40 transition-all duration-200 group"
+      className="inline-flex items-center gap-3 rounded-xl border border-[#E6EBEE] px-4 py-2 bg-white hover:bg-[#F7F9FB] hover:border-sky-400/40 transition-all duration-200 group"
     >
-      <div className="w-8 h-8 bg-gradient-to-br from-[#2E5D50] to-[#3A9BDC] rounded-lg flex items-center justify-center">
+      <div className="w-8 h-8 bg-gradient-to-br from-sky-400 to-blue-500 rounded-lg flex items-center justify-center">
         <MapPin className="w-4 h-4 text-white" />
       </div>
       <div className="text-left">
-        <span className="block text-sm font-semibold text-gray-900 group-hover:text-[#2E5D50] transition-colors">
+        <span className="block text-sm font-semibold text-gray-900 group-hover:text-sky-600 transition-colors">
           {pref}
         </span>
         <span className="block text-xs text-gray-500">
           Current Region
         </span>
       </div>
-      <ChevronDown className="w-4 h-4 text-gray-400 group-hover:text-[#3A9BDC] transition-colors" />
+      <ChevronDown className="w-4 h-4 text-gray-400 group-hover:text-sky-500 transition-colors" />
     </a>
   );
 }

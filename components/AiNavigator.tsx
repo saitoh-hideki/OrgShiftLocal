@@ -57,7 +57,7 @@ export default function AiNavigator() {
     <div className="bg-white/20 backdrop-blur-sm border border-white/30 rounded-2xl p-6 text-white">
       {/* ヘッダー */}
       <div className="flex items-center gap-4 mb-6">
-        <div className="w-14 h-14 bg-gradient-to-br from-[#3A9BDC] to-[#2E5D50] rounded-2xl flex items-center justify-center">
+        <div className="w-14 h-14 bg-gradient-to-br from-sky-400 to-blue-500 rounded-2xl flex items-center justify-center">
           <Bot className="w-7 h-7 text-white" />
         </div>
         <div>
@@ -119,7 +119,7 @@ export default function AiNavigator() {
         <button
           type="submit"
           disabled={isLoading || !query.trim()}
-          className="w-full bg-gradient-to-r from-[#3A9BDC] to-[#2E5D50] hover:from-[#3A9BDC]/90 hover:to-[#2E5D50]/90 disabled:opacity-50 disabled:cursor-not-allowed text-white font-semibold py-4 px-6 rounded-xl transition-all duration-200 flex items-center justify-center gap-3 shadow-lg hover:shadow-xl"
+          className="w-full bg-gradient-to-r from-sky-500 to-blue-600 hover:from-sky-500/90 hover:to-blue-600/90 disabled:opacity-50 disabled:cursor-not-allowed text-white font-semibold py-4 px-6 rounded-xl transition-all duration-200 flex items-center justify-center gap-3 shadow-lg hover:shadow-xl"
         >
           {isLoading ? (
             <>
@@ -139,7 +139,7 @@ export default function AiNavigator() {
       {response && (
         <div className="mt-6 p-4 bg-white/10 border border-white/20 rounded-xl">
           <div className="flex items-center gap-2 mb-3">
-            <Bot className="w-4 h-4 text-[#3A9BDC]" />
+            <Bot className="w-4 h-4 text-sky-400" />
             <span className="text-sm font-medium text-white/80">AI回答 / AI Response</span>
           </div>
           <p className="text-sm text-white/90 whitespace-pre-wrap leading-relaxed">{response}</p>

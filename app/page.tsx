@@ -31,24 +31,39 @@ export default async function Home({
       <main>
         {/* 地域選択表示 */}
         {!pref && (
-          <section className="py-8">
-            <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-              <div className="text-center mb-6">
-                <h1 className="text-3xl md:text-4xl font-bold text-gray-900 mb-3">
-                  地域を選んでください
-                  <span className="block text-lg md:text-xl font-normal text-gray-500 mt-2">
-                    Please select your region
-                  </span>
+          <section className="bg-gradient-to-b from-[#F7F9FB] to-white py-12 md:py-16 relative overflow-hidden min-h-screen flex items-center">
+            {/* 装飾的な背景要素 */}
+            <div className="absolute inset-0 bg-gradient-to-br from-sky-100/20 to-blue-100/30"></div>
+            <div className="absolute top-10 left-10 w-32 h-32 bg-sky-200/30 rounded-full blur-xl"></div>
+            <div className="absolute bottom-10 right-10 w-40 h-40 bg-blue-200/30 rounded-full blur-xl"></div>
+            <div className="absolute top-1/2 left-1/4 w-24 h-24 bg-sky-100/25 rounded-full blur-xl"></div>
+            <div className="absolute top-1/3 right-1/4 w-20 h-20 bg-blue-100/25 rounded-full blur-xl"></div>
+            
+            <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full">
+              <div className="text-center mb-12">
+                <h1 className="text-5xl md:text-6xl font-bold text-gray-800 mb-6">
+                  地域を選ぶ
                 </h1>
-                <p className="text-base text-gray-600 max-w-xl mx-auto">
+                <p className="text-xl text-gray-700 max-w-3xl mx-auto leading-relaxed">
                   都道府県をクリックすると、その地域向けのサービスと情報が表示されます
-                  <span className="block text-sm text-gray-500 mt-1">
-                    Click on a prefecture to see local services and information
-                  </span>
                 </p>
               </div>
-              <div className="bg-white rounded-2xl p-6 shadow-md border border-gray-200">
+              
+              <div className="bg-white/80 backdrop-blur-md rounded-3xl p-8 border border-gray-200/50 shadow-xl max-w-5xl mx-auto">
+                <div className="text-center mb-6">
+                  <h2 className="text-2xl font-bold text-gray-800 mb-2">都道府県から選択</h2>
+                </div>
                 <SimpleJapanMap />
+              </div>
+              
+              {/* 追加の説明 */}
+              <div className="text-center mt-12">
+                <div className="inline-flex items-center gap-3 bg-white/80 backdrop-blur-sm border border-gray-200/50 rounded-2xl px-6 py-4 shadow-lg">
+                  <div className="w-3 h-3 bg-sky-500 rounded-full animate-pulse"></div>
+                  <span className="text-gray-800 text-sm font-medium">
+                    地域を選択すると、AIアシスタントと地域情報が利用できます
+                  </span>
+                </div>
               </div>
             </div>
           </section>
@@ -57,15 +72,8 @@ export default async function Home({
         {/* 地域選択済み時のダッシュボード */}
         {pref && (
           <>
-            {/* 地域情報ヘッダー */}
-            <section className="py-8">
-              <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                <PrefSelector pref={pref} />
-              </div>
-            </section>
-
             {/* ヒーローセクション */}
-            <section className="bg-gradient-to-br from-[#2E5D50] via-[#2E5D50]/90 to-[#3A9BDC]/80 py-16 relative overflow-hidden">
+            <section className="bg-gradient-to-br from-sky-400 via-sky-500/90 to-blue-600/80 py-16 relative overflow-hidden">
               <div className="absolute inset-0 bg-black/10"></div>
               <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
