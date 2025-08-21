@@ -13,9 +13,13 @@ serve(async (req) => {
   }
 
   try {
+    // 認証チェックを完全に無効化（開発用）
+    // 本番環境では適切な認証を実装してください
+    
     // Supabaseクライアントを作成（シークレットを使用）
     const supabaseUrl = Deno.env.get('SUPABASE_URL')!
     const supabaseServiceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!
+    const openaiApiKey = Deno.env.get('OPENAI_API_KEY')
     
     const supabase = createClient(supabaseUrl, supabaseServiceKey)
 
@@ -25,7 +29,7 @@ serve(async (req) => {
 
     switch (task) {
       case 'navigate':
-        response = await handleNavigateQuery(query, supabase)
+        response = await handleNavigateQuery(query, supabase, openaiApiKey)
         break
       case 'generate_quiz':
         return new Response(
@@ -62,76 +66,115 @@ serve(async (req) => {
   }
 })
 
-async function handleNavigateQuery(query: string, supabase: any): Promise<string> {
+async function handleNavigateQuery(query: string, supabase: any, openaiApiKey?: string): Promise<string> {
   try {
     // データベースから関連情報を取得
     const { data: links, error } = await supabase
       .from('links')
       .select('*')
       .or(`title.ilike.%${query}%,description.ilike.%${query}%`)
-      .limit(3)
+      .limit(5)
 
     if (error) {
       console.error('Database error:', error)
     }
 
-    // プロトタイプ用：簡単なルールベース応答
+    // OpenAI APIが利用可能な場合は、本格的なAI応答を生成
+    if (openaiApiKey) {
+      try {
+        console.log('Using OpenAI API for query:', query)
+        
+        const systemPrompt = `あなたは地域の行政サービスに詳しい親しみやすいAIアシスタントです。
+ユーザーの質問に対して、自然で親しみやすい口調で、具体的で役立つ情報を提供してください。
+
+利用可能な地域サービス情報：
+${links && links.length > 0 ? links.map(link => `- ${link.title}: ${link.description}`).join('\n') : '（データベースに関連する具体的な情報は見つかりませんでした）'}
+
+回答の際は以下の点を心がけてください：
+1. 親しみやすく自然な口調で（硬い敬語は避ける）
+2. 具体的で実用的な情報を提供
+3. 必要に応じて次のアクションを提案
+4. 定型文ではなく、質問の内容に合わせた個別の回答
+5. 地域の行政サービス、ごみ分別、図書館、防災、子育て支援などの情報を中心に
+
+挨拶には自然に応答し、質問には具体的に答えてください。`
+
+        const response = await fetch('https://api.openai.com/v1/chat/completions', {
+          method: 'POST',
+          headers: {
+            'Authorization': `Bearer ${openaiApiKey}`,
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            model: 'gpt-3.5-turbo',
+            messages: [
+              {
+                role: 'system',
+                content: systemPrompt
+              },
+              {
+                role: 'user',
+                content: query
+              }
+            ],
+            max_tokens: 500,
+            temperature: 0.7,
+          }),
+        })
+
+        if (response.ok) {
+          const data = await response.json()
+          console.log('OpenAI API response received')
+          return data.choices[0].message.content
+        } else {
+          const errorText = await response.text()
+          console.error('OpenAI API error:', response.status, errorText)
+        }
+      } catch (error) {
+        console.error('OpenAI API call failed:', error)
+      }
+    } else {
+      console.log('OpenAI API key not available, using fallback')
+    }
+
+    // フォールバック: シンプルだが自然な応答
     const lowercaseQuery = query.toLowerCase()
 
-    if (lowercaseQuery.includes('ごみ') || lowercaseQuery.includes('分別')) {
-      return `ごみの分別に関するお問い合わせですね。
+    // 挨拶への自然な応答
+    if (lowercaseQuery.includes('こんにちは') || lowercaseQuery.includes('こんばんは') || lowercaseQuery.includes('おはよう') || lowercaseQuery.includes('はじめまして')) {
+      return `こんにちは！地域のサービスについて何でもお聞きください。
 
-**可燃ごみ**: 生ごみ、紙くず、プラスチック類
-**不燃ごみ**: 金属類、ガラス類、陶器類
-**資源ごみ**: ペットボトル、缶、びん、新聞紙
+例えば、ごみの分別方法、図書館の利用案内、防災情報、子育て支援制度など、どんなことでもお答えします。
 
-詳しくは市のホームページでご確認いただけます。また、ごみ分別クイズで楽しく学ぶこともできます！`
+何か具体的に知りたいことはありますか？`
     }
 
-    if (lowercaseQuery.includes('図書館')) {
-      return `図書館に関するお問い合わせですね。
+    // データベースに情報がある場合
+    if (links && links.length > 0) {
+      const linkInfo = links.map(link => `• ${link.title}: ${link.description}`).join('\n')
+      return `「${query}」について、以下の情報が見つかりました：
 
-**開館時間**: 平日 9:00-20:00、土日祝 9:00-17:00
-**休館日**: 月曜日（祝日の場合は翌日）、年末年始
-**貸出期間**: 図書・雑誌 2週間、DVD 1週間
+${linkInfo}
 
-オンライン予約システムもご利用いただけます。`
+他にも詳しいことを知りたければ、お気軽にお聞きください！`
     }
 
-    if (lowercaseQuery.includes('防災')) {
-      return `防災に関するお問い合わせですね。
+    // 一般的な応答
+    return `「${query}」についてですね。
 
-**避難所**: 最寄りの小学校・中学校
-**非常持出袋**: 水、食料、懐中電灯、ラジオ、薬等
-**緊急連絡先**: 119（消防）、110（警察）
+地域のサービスや制度について、できる限りお答えします。もう少し具体的に教えていただけると、より詳しい情報をお伝えできます。
 
-防災マップで避難経路をご確認ください。防災クイズで知識を深めることもおすすめです。`
-    }
+例えば：
+• ごみ分別について知りたい
+• 図書館の使い方を教えて
+• 防災情報が知りたい
+• 子育て支援について詳しく
 
-    if (lowercaseQuery.includes('子育て')) {
-      return `子育て支援に関するお問い合わせですね。
+どんなことでも、お気軽にお聞きください！`
 
-**子育て支援センター**: 相談・一時預かりサービス
-**児童手当**: 申請手続きについて
-**予防接種**: スケジュールと接種会場
-
-詳しくは子育て支援課（TEL: 123-4567）までお問い合わせください。`
-    }
-
-    // デフォルト応答
-    return `お問い合わせありがとうございます。
-
-以下のサービスをご利用いただけます：
-- ごみ分別・収集日の確認
-- 図書館の利用案内・予約
-- 防災情報・避難所マップ  
-- 子育て支援制度の案内
-- 健康診断・予防接種の予約
-
-より詳しい情報は各担当課までお問い合わせください。`
   } catch (error) {
     console.error('Error in handleNavigateQuery:', error)
-    return '申し訳ございません。一時的にエラーが発生しています。'
+    return '申し訳ございません。一時的にエラーが発生しています。もう一度お試しください。'
   }
 }
 

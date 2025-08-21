@@ -16,17 +16,17 @@ export default function SectionHeader({
   className = "" 
 }: SectionHeaderProps) {
   return (
-    <div className={`section-header ${className}`}>
-      <div className="flex items-center justify-between mb-4">
+    <div className={`text-center mb-16 ${className}`}>
+      <div className="flex items-center justify-between mb-6">
         <div className="text-center flex-1">
-          <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-2">
+          {subtitle && (
+            <div className="inline-flex items-center gap-2 px-3 py-1.5 bg-blue-50 border border-blue-200/50 rounded-full mb-4">
+              <span className="text-sm font-medium text-blue-700">{subtitle}</span>
+            </div>
+          )}
+          <h2 className="text-4xl md:text-5xl font-bold text-gray-900 mb-4 leading-tight">
             {title}
           </h2>
-          {subtitle && (
-            <p className="subtitle text-lg font-normal text-gray-500">
-              {subtitle}
-            </p>
-          )}
         </div>
         {action && (
           <div className="flex-shrink-0">
@@ -35,7 +35,7 @@ export default function SectionHeader({
         )}
       </div>
       {description && (
-        <p className="description text-lg text-gray-600 max-w-2xl mx-auto">
+        <p className="text-xl text-gray-600 max-w-3xl mx-auto leading-relaxed">
           {description}
         </p>
       )}
