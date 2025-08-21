@@ -46,6 +46,46 @@ create table if not exists links (
   created_at timestamptz default now()
 );
 
+-- 今月の学び（学習コンテンツ）テーブル
+create table if not exists learning_contents (
+  id uuid primary key default gen_random_uuid(),
+  title text not null,
+  description text,
+  category text not null,         -- 歴史・文化, 防災・安全, 環境・自然, ...
+  target_grade text not null,     -- 対象学年
+  duration text not null,         -- 所要時間
+  start_date date not null,       -- 開始日
+  end_date date,                  -- 終了日（単日イベントの場合はnull）
+  max_participants int not null,  -- 定員
+  current_participants int default 0, -- 現在の参加者数
+  instructor text not null,       -- 講師名
+  location text not null,         -- 開催場所
+  is_active boolean default true, -- 募集状況
+  district text,                  -- 対象地域
+  created_by text,                -- 作成者
+  created_at timestamptz default now(),
+  updated_at timestamptz default now()
+);
+
+-- 過去の学び動画テーブル（新規追加）
+create table if not exists learning_videos (
+  id uuid primary key default gen_random_uuid(),
+  title text not null,
+  description text,
+  duration_seconds int check (duration_seconds >= 0 and duration_seconds <= 28800), -- 0〜8時間
+  year int not null check (year >= 2000 and year <= 2100), -- 西暦4桁
+  category text not null,         -- 安全, IT, AI, 環境, 文化, 健康, 子育て, その他
+  tags text[] default '{}',
+  video_url text not null,        -- 埋め込みURL（YouTube/Vimeo/HLS）
+  thumbnail_url text,             -- サムネイル画像URL
+  materials_url text,             -- 資料URL（任意）
+  speaker text,                   -- 講師名（任意）
+  is_published boolean not null default false,
+  popularity int not null default 0,
+  created_at timestamptz default now(),
+  updated_at timestamptz default now()
+);
+
 create table if not exists quizzes (
   id uuid primary key default gen_random_uuid(),
   author_name text,               -- 任意
@@ -121,11 +161,20 @@ create table if not exists coupon_grants (
   used_at timestamptz
 );
 
--- ❸ 念のため、全テーブルで RLS 無効化（明示）
+-- ❸ インデックス作成（learning_videos用）
+create index if not exists idx_learning_videos_year_category_published 
+  on learning_videos (year desc, category, is_published, popularity desc, created_at desc);
+
+create index if not exists idx_learning_videos_search 
+  on learning_videos using gin (to_tsvector('japanese', title || ' ' || coalesce(description, '')));
+
+-- ❹ 念のため、全テーブルで RLS 無効化（明示）
 alter table profiles        disable row level security;
 alter table orgs            disable row level security;
 alter table org_members     disable row level security;
 alter table links           disable row level security;
+alter table learning_contents disable row level security;
+alter table learning_videos disable row level security;
 alter table quizzes         disable row level security;
 alter table quiz_questions  disable row level security;
 alter table quiz_attempts   disable row level security;
@@ -133,6 +182,6 @@ alter table reports         disable row level security;
 alter table coupons         disable row level security;
 alter table coupon_grants   disable row level security;
 
--- ❹ 権限付与（誰でもアクセス可能）
+-- ❺ 権限付与（誰でもアクセス可能）
 grant all on all tables in schema public to anon, authenticated;
 grant all on all sequences in schema public to anon, authenticated;

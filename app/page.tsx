@@ -1,3 +1,6 @@
+'use client';
+
+import { useState, useEffect } from 'react';
 import Header from '@/components/Header'
 import EmergencyBanner from '@/components/EmergencyBanner'
 import HeroStatus from '@/components/HeroStatus'
@@ -9,16 +12,144 @@ import NoticeSection from '@/components/NoticeSection'
 import Footer from '@/components/Footer'
 import PrefSelector from '@/components/PrefSelector'
 import SimpleJapanMap from '@/components/SimpleJapanMap'
-import { MapPin, TrendingUp, BookOpen, Shield, Heart, Bus, FileText, Building, Calendar } from 'lucide-react'
+import LearningSettingsButton from '@/components/LearningSettingsButton'
+import SectionHeader from '@/components/SectionHeader'
+import CardBase from '@/components/CardBase'
+import VideoSlider from '@/components/VideoSlider'
+import ModalPlayer from '@/components/ModalPlayer'
+import { MapPin, TrendingUp, BookOpen, Shield, Heart, Bus, FileText, Building, Calendar, Play } from 'lucide-react'
 
-export default async function Home({
+const CATS = [
+  { slug:'safety', name:'防災・安心', href:'/c/safety', icon:'🛡️' },
+  { slug:'life', name:'生活サポート', href:'/c/life', icon:'🏠' },
+  { slug:'health', name:'健康・医療', href:'/c/health', icon:'🩺' },
+  { slug:'childcare', name:'子育て・教育', href:'/c/childcare', icon:'🧒' },
+  { slug:'procedures', name:'行政手続き', href:'/c/procedures', icon:'📝' },
+  { slug:'subsidy', name:'補助金・助成金', href:'/subsidies', icon:'💰' },
+  { slug:'digital', name:'デジタルサービス', href:'/digital-services', icon:'📱' },
+  { slug:'future', name:'未来・学び', href:'/c/future', icon:'✨' },
+];
+
+// サンプル動画データ（後でAPIから取得）
+const SAMPLE_VIDEOS = [
+  {
+    id: '1',
+    title: '防災基礎知識講座',
+    description: '地震や台風などの自然災害に対する基本的な備えと対応方法を学びます。',
+    year: 2025,
+    category: '安全',
+    durationSeconds: 3600,
+    thumbnailUrl: 'https://img.youtube.com/vi/dQw4w9WgXcQ/hqdefault.jpg',
+    target: '一般',
+    videoUrl: 'https://www.youtube.com/watch?v=dQw4w9WgXcQ',
+    materialsUrl: 'https://example.com/materials/safety-basic.pdf',
+    speaker: '山田太郎'
+  },
+  {
+    id: '2',
+    title: 'デジタル化の基礎',
+    description: '行政手続きのオンライン化について、基本的な操作方法を解説します。',
+    year: 2025,
+    category: 'IT',
+    durationSeconds: 2700,
+    thumbnailUrl: 'https://img.youtube.com/vi/dQw4w9WgXcQ/hqdefault.jpg',
+    target: '一般',
+    videoUrl: 'https://www.youtube.com/watch?v=dQw4w9WgXcQ',
+    materialsUrl: 'https://example.com/materials/digital-basic.pdf',
+    speaker: '佐藤花子'
+  },
+  {
+    id: '3',
+    title: '地域の歴史と文化',
+    description: '長野市の歴史的な背景と地域文化について深く学びます。',
+    year: 2024,
+    category: '文化',
+    durationSeconds: 5400,
+    thumbnailUrl: 'https://img.youtube.com/vi/dQw4w9WgXcQ/hqdefault.jpg',
+    target: '一般',
+    videoUrl: 'https://www.youtube.com/watch?v=dQw4w9WgXcQ',
+    materialsUrl: 'https://example.com/materials/history-culture.pdf',
+    speaker: '田中一郎'
+  },
+  {
+    id: '4',
+    title: '健康管理のコツ',
+    description: '日常生活で実践できる健康管理の方法を紹介します。',
+    year: 2024,
+    category: '健康',
+    durationSeconds: 1800,
+    thumbnailUrl: 'https://img.youtube.com/vi/dQw4w9WgXcQ/hqdefault.jpg',
+    target: '一般',
+    videoUrl: 'https://www.youtube.com/watch?v=dQw4w9WgXcQ',
+    materialsUrl: 'https://example.com/materials/health-tips.pdf',
+    speaker: '鈴木美咲'
+  },
+  {
+    id: '5',
+    title: '環境問題と私たち',
+    description: '地球温暖化やプラスチック問題など、身近な環境問題について考えます。',
+    year: 2023,
+    category: '環境',
+    durationSeconds: 4500,
+    thumbnailUrl: 'https://img.youtube.com/vi/dQw4w9WgXcQ/hqdefault.jpg',
+    target: '一般',
+    videoUrl: 'https://www.youtube.com/watch?v=dQw4w9WgXcQ',
+    materialsUrl: 'https://example.com/materials/environment.pdf',
+    speaker: '高橋健太'
+  },
+  {
+    id: '6',
+    title: '子育て支援制度',
+    description: '利用できる子育て支援制度と申請方法について詳しく説明します。',
+    year: 2023,
+    category: '子育て',
+    durationSeconds: 2400,
+    thumbnailUrl: 'https://img.youtube.com/vi/dQw4w9WgXcQ/hqdefault.jpg',
+    target: '子育て世帯',
+    videoUrl: 'https://www.youtube.com/watch?v=dQw4w9WgXcQ',
+    materialsUrl: 'https://example.com/materials/childcare-support.pdf',
+    speaker: '伊藤恵子'
+  }
+];
+
+export default function Home({
   searchParams,
 }: {
   searchParams?: Promise<{ pref?: string }>
 }) {
-  const params = await searchParams;
-  const pref = params?.pref || null;
+  const [selectedVideo, setSelectedVideo] = useState<any>(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [pref, setPref] = useState<string | null>(null);
   
+  // searchParamsを解決
+  useEffect(() => {
+    if (searchParams) {
+      searchParams.then(params => {
+        setPref(params?.pref || null);
+      });
+    }
+  }, [searchParams]);
+  
+  // 動画クリック時の処理
+  const handleVideoClick = (video: any) => {
+    setSelectedVideo(video);
+    setIsModalOpen(true);
+  };
+
+  // モーダルを閉じる
+  const handleCloseModal = () => {
+    setIsModalOpen(false);
+    setSelectedVideo(null);
+  };
+
+  // 関連動画を取得（同カテゴリ、同じ動画以外）
+  const getRelatedVideos = (currentVideo: any) => {
+    return SAMPLE_VIDEOS.filter(video => 
+      video.id !== currentVideo.id && 
+      video.category === currentVideo.category
+    ).slice(0, 3);
+  };
+
   return (
     <div className="min-h-screen bg-gradient-to-b from-white via-gray-50/50 to-gray-100/30">
       <Header />
@@ -94,85 +225,88 @@ export default async function Home({
                     <AiNavigator />
                   </div>
                 </div>
-              </div>
-              
-              {/* 装飾的な背景要素 */}
-              <div className="absolute top-10 left-10 w-20 h-20 bg-white/10 rounded-full blur-xl"></div>
-              <div className="absolute bottom-10 right-10 w-32 h-32 bg-white/10 rounded-full blur-xl"></div>
-            </section>
-
-            {/* 行政ショートカット */}
-            <section className="py-16">
-              <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                <div className="text-center mb-12">
-                  <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
-                    よく使うサービス
-                    <span className="block text-lg font-normal text-gray-500">Frequently Used Services</span>
-                  </h2>
-                  <p className="text-lg text-gray-600 max-w-2xl mx-auto">
-                    日常生活で便利な行政サービスへのアクセス
-                    <span className="block text-base text-gray-500 mt-1">
-                      Quick access to essential government services for daily life
-                    </span>
-                  </p>
-                </div>
-                <GovShortcutGrid />
+                
+                {/* 装飾的な背景要素 */}
+                <div className="absolute top-10 left-10 w-20 h-20 bg-white/10 rounded-full blur-xl"></div>
+                <div className="absolute bottom-10 right-10 w-32 h-32 bg-white/10 rounded-full blur-xl"></div>
               </div>
             </section>
 
-            {/* 今日の学び */}
+            {/* 8カテゴリグリッド（統一されたスタイル） */}
             <section className="py-16 bg-white">
               <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                <div className="text-center mb-12">
-                  <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
-                    今日の学び
-                    <span className="block text-lg font-normal text-gray-500">Today's Learning</span>
-                  </h2>
-                  <p className="text-lg text-gray-600 max-w-2xl mx-auto">
-                    地域の特色を活かした学習コンテンツ
-                    <span className="block text-base text-gray-500 mt-1">
-                      Learning content featuring local characteristics
-                    </span>
-                  </p>
+                <SectionHeader
+                  title="サービスカテゴリ"
+                  subtitle="Service Categories"
+                  description="地域のサービスをカテゴリ別に探す"
+                />
+                <div className="grid grid-cols-1 sm:grid-cols-4 gap-4">
+                  {CATS.map(cat => (
+                    <CardBase
+                      key={cat.slug}
+                      href={cat.href}
+                      as="a"
+                      className="text-center group"
+                    >
+                      <div className="text-3xl mb-3">{cat.icon}</div>
+                      <div className="font-semibold text-gray-900 group-hover:text-sky-700 transition-colors">
+                        {cat.name}
+                      </div>
+                    </CardBase>
+                  ))}
+                </div>
+              </div>
+            </section>
+
+            {/* 今月の学び（統一されたスタイル） */}
+            <section className="py-16 bg-white">
+              <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div className="flex items-center justify-center gap-4 mb-12">
+                  <SectionHeader
+                    title="今月の学び"
+                    description="地域の特色を活かした学習コンテンツ"
+                  />
+                  <LearningSettingsButton />
                 </div>
                 <LearningStrip />
               </div>
             </section>
 
-            {/* 地域クイズ */}
+            {/* 過去の学び動画（新規追加） */}
             <section className="py-16 bg-gradient-to-b from-gray-50 to-gray-100">
               <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                <div className="text-center mb-12">
-                  <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
-                    新着クイズ
-                    <span className="block text-lg font-normal text-gray-500">Latest Quizzes</span>
-                  </h2>
-                  <p className="text-lg text-gray-600 max-w-2xl mx-auto">
-                    地域の知識を楽しく学べるクイズ
-                    <span className="block text-base text-gray-500 mt-1">
-                      Fun quizzes to learn about your local area
-                    </span>
-                  </p>
-                </div>
+                <SectionHeader
+                  title="過去の学び動画"
+                  subtitle="Past Learning Videos"
+                  description="アーカイブされた学習動画をいつでも視聴できます"
+                />
+                <VideoSlider
+                  videos={SAMPLE_VIDEOS}
+                  onVideoClick={handleVideoClick}
+                />
+              </div>
+            </section>
+
+            {/* 地域クイズ（統一されたスタイル） */}
+            <section className="py-16 bg-white">
+              <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <SectionHeader
+                  title="新着学びのクイズ"
+                  subtitle="Latest Learning Quizzes"
+                  description="地域の知識を楽しく学べるクイズ"
+                />
                 <LocalQuizRail />
               </div>
             </section>
 
-            {/* お知らせ */}
-            <section className="py-16 bg-white">
+            {/* お知らせ（統一されたスタイル） */}
+            <section className="py-16 bg-gradient-to-b from-gray-50 to-gray-100">
               <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                <div className="text-center mb-12">
-                  <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
-                    お知らせ
-                    <span className="block text-lg font-normal text-gray-500">Announcements</span>
-                  </h2>
-                  <p className="text-lg text-gray-600 max-w-2xl mx-auto">
-                    重要な情報や更新のお知らせ
-                    <span className="block text-base text-gray-500 mt-1">
-                      Important information and updates
-                    </span>
-                  </p>
-                </div>
+                <SectionHeader
+                  title="お知らせ"
+                  subtitle="Announcements"
+                  description="重要な情報や更新のお知らせ"
+                />
                 <NoticeSection />
               </div>
             </section>
@@ -181,6 +315,15 @@ export default async function Home({
       </main>
 
       <Footer />
+
+      {/* モーダルプレイヤー */}
+      <ModalPlayer
+        video={selectedVideo}
+        relatedVideos={selectedVideo ? getRelatedVideos(selectedVideo) : []}
+        isOpen={isModalOpen}
+        onClose={handleCloseModal}
+        onVideoClick={handleVideoClick}
+      />
     </div>
   );
 }

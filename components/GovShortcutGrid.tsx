@@ -2,7 +2,8 @@
 
 import { useEffect, useState } from 'react'
 import { supabase } from '@/lib/supabase'
-import { Link } from '@/types'
+import { Link as LinkType } from '@/types'
+import Link from 'next/link'
 import { 
   Trash2, Shield, BookOpen, Heart, 
   Baby, Bus, FileText, Building,
@@ -20,6 +21,19 @@ const iconMap: { [key: string]: any } = {
   'building': Building,
 }
 
+// カテゴリマッピングを統一（カテゴリページのスラッグと一致させる）
+const categoryMapping: { [key: string]: string } = {
+  'waste': 'life',
+  'disaster': 'safety',
+  'library': 'future',
+  'health': 'health',
+  'childcare': 'childcare',
+  'transport': 'life',
+  'tax': 'procedures',
+  'facility': 'life',
+  'event': 'future',
+}
+
 const categoryLabels: { [key: string]: { ja: string; en: string; color: string } } = {
   'waste': { ja: 'ごみ・リサイクル', en: 'Waste & Recycling', color: 'bg-green-100 text-green-700 border-green-200' },
   'disaster': { ja: '防災・安全', en: 'Disaster & Safety', color: 'bg-red-100 text-red-700 border-red-200' },
@@ -33,7 +47,7 @@ const categoryLabels: { [key: string]: { ja: string; en: string; color: string }
 }
 
 export default function GovShortcutGrid() {
-  const [links, setLinks] = useState<Link[]>([])
+  const [links, setLinks] = useState<LinkType[]>([])
   const [isLoading, setIsLoading] = useState(true)
   const [showAll, setShowAll] = useState(false)
 
@@ -108,13 +122,12 @@ export default function GovShortcutGrid() {
         {links.map((link) => {
           const Icon = getIcon(link.icon)
           const categoryInfo = getCategoryInfo(link.category)
+          const categorySlug = categoryMapping[link.category] || 'life'
           
           return (
-            <a
+            <Link
               key={link.id}
-              href={link.url}
-              target="_blank"
-              rel="noopener noreferrer"
+              href={`/c/${categorySlug}`}
               className="group bg-white hover:bg-gray-50 border border-gray-200 hover:border-[#3A9BDC]/30 rounded-2xl p-6 shadow-md hover:shadow-lg transition-all duration-300 hover:scale-105"
             >
               <div className="space-y-4">
@@ -145,7 +158,7 @@ export default function GovShortcutGrid() {
                 {/* アクションインジケーター */}
                 <div className="flex items-center justify-between pt-2">
                   <div className="flex items-center gap-1 text-xs text-[#3A9BDC] opacity-0 group-hover:opacity-100 transition-opacity">
-                    <span>詳細を見る</span>
+                    <span>カテゴリを見る</span>
                     <ChevronRight className="w-3 h-3" />
                   </div>
                   <div className="flex items-center gap-1 text-xs text-gray-400">
@@ -154,7 +167,7 @@ export default function GovShortcutGrid() {
                   </div>
                 </div>
               </div>
-            </a>
+            </Link>
           )
         })}
       </div>

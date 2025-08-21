@@ -54,6 +54,17 @@ insert into links (category, title, description, url, type, icon, order_index) v
 ('event','地域ボランティア','地域活動への参加','https://www.saigaivc.com/','event','calendar',30),
 ('event','文化財見学会','地域の文化財を巡る','https://www.bunka.go.jp/','event','calendar',31);
 
+-- 今月の学び（学習コンテンツ）サンプルデータ - 長野県スマートライフAO長野校
+insert into learning_contents (title, description, category, target_grade, duration, start_date, end_date, max_participants, current_participants, instructor, location, district, created_by) values
+('安全講習', '日常生活での安全意識向上と事故防止について学ぶ講座', '安全・防災', '一般・成人', '2時間', '2024-12-15', '2024-12-15', 25, 18, '田中 安全', 'スマートライフAO長野校', '長野県', 'スマートライフAO長野校'),
+('Apple活用講座', 'iPhone・iPad・Macの基本操作から応用まで、Apple製品を活用するための講座', 'IT・デジタル', '一般・成人', '3時間', '2024-12-18', '2024-12-18', 20, 15, '佐藤 アップル', 'スマートライフAO長野校・オンライン', '長野県', 'スマートライフAO長野校'),
+('Google活用講座', 'Google検索、Gmail、Googleカレンダー、Googleドライブなどの活用方法を学ぶ講座', 'IT・デジタル', '一般・成人', '2.5時間', '2024-12-20', '2024-12-20', 22, 19, '山田 グーグル', 'スマートライフAO長野校・オンライン', '長野県', 'スマートライフAO長野校'),
+('生成AI活用講座', 'ChatGPT、Bard、Claudeなどの生成AIの基本的な使い方と実用的な活用方法を学ぶ講座', 'IT・デジタル', '一般・成人', '4時間', '2024-12-22', '2024-12-22', 18, 16, '高橋 AI', 'スマートライフAO長野校・オンライン', '長野県', 'スマートライフAO長野校'),
+('スマートフォン基本操作', 'スマートフォンの基本操作からアプリの使い方まで、初心者向けの講座', 'IT・デジタル', 'シニア・一般', '2時間', '2024-12-25', '2024-12-25', 30, 25, '鈴木 スマホ', 'スマートライフAO長野校', '長野県', 'スマートライフAO長野校'),
+('オンラインショッピング講座', '安全で便利なオンラインショッピングの方法と注意点を学ぶ講座', 'IT・デジタル', '一般・成人', '1.5時間', '2024-12-28', '2024-12-28', 25, 20, '伊藤 ショッピング', 'スマートライフAO長野校・オンライン', '長野県', 'スマートライフAO長野校'),
+('SNS活用講座', 'Facebook、Instagram、TwitterなどのSNSの安全な使い方と活用方法を学ぶ講座', 'IT・デジタル', '一般・成人', '2時間', '2024-12-30', '2024-12-30', 20, 17, '渡辺 SNS', 'スマートライフAO長野校・オンライン', '長野県', 'スマートライフAO長野校'),
+('デジタル写真整理講座', 'スマートフォンで撮った写真の整理・編集・保存方法を学ぶ講座', 'IT・デジタル', '一般・成人', '2.5時間', '2025-01-05', '2025-01-05', 18, 14, '中村 写真', 'スマートライフAO長野校', '長野県', 'スマートライフAO長野校');
+
 -- 事業者
 insert into orgs (name, category, owner_name, district, verified) values
 ('ベーカリー花', 'bakery', '花田太郎', '中央区', true),
@@ -139,3 +150,16 @@ insert into profiles (display_name, role, district) values
 ('テストユーザー', 'viewer', '中央区'),
 ('管理者', 'admin', '全域'),
 ('事業者A', 'creator', '東区');
+
+-- 学習動画（サンプルデータ）
+insert into learning_videos (id, title, description, duration_seconds, year, category, tags, video_url, thumbnail_url, materials_url, speaker, is_published, popularity) values
+  ('v001', '防災基礎知識講座', '地震や台風などの自然災害に対する基本的な備えと対応方法を学びます。', 3600, 2025, '安全', ARRAY['一般', 'オンライン'], 'https://www.youtube.com/embed/dQw4w9WgXcQ', 'https://img.youtube.com/vi/dQw4w9WgXcQ/hqdefault.jpg', 'https://example.com/materials/safety-basic.pdf', '山田太郎', true, 95),
+  ('v002', 'デジタル化の基礎', '行政手続きのオンライン化について、基本的な操作方法を解説します。', 2700, 2025, 'IT', ARRAY['一般', '初心者'], 'https://www.youtube.com/embed/dQw4w9WgXcQ', 'https://img.youtube.com/vi/dQw4w9WgXcQ/hqdefault.jpg', 'https://example.com/materials/digital-basic.pdf', '佐藤花子', true, 88),
+  ('v003', '地域の歴史と文化', '長野市の歴史的な背景と地域文化について深く学びます。', 5400, 2024, '文化', ARRAY['一般', '歴史'], 'https://www.youtube.com/embed/dQw4w9WgXcQ', 'https://img.youtube.com/vi/dQw4w9WgXcQ/hqdefault.jpg', 'https://example.com/materials/history-culture.pdf', '田中一郎', true, 92),
+  ('v004', '健康管理のコツ', '日常生活で実践できる健康管理の方法を紹介します。', 1800, 2024, '健康', ARRAY['一般', '健康'], 'https://www.youtube.com/embed/dQw4w9WgXcQ', 'https://img.youtube.com/vi/dQw4w9WgXcQ/hqdefault.jpg', 'https://example.com/materials/health-tips.pdf', '鈴木美咲', true, 85),
+  ('v005', '環境問題と私たち', '地球温暖化やプラスチック問題など、身近な環境問題について考えます。', 4500, 2023, '環境', ARRAY['一般', '環境'], 'https://www.youtube.com/embed/dQw4w9WgXcQ', 'https://img.youtube.com/vi/dQw4w9WgXcQ/hqdefault.jpg', 'https://example.com/materials/environment.pdf', '高橋健太', true, 78),
+  ('v006', '子育て支援制度', '利用できる子育て支援制度と申請方法について詳しく説明します。', 2400, 2023, '子育て', ARRAY['子育て世帯', '制度'], 'https://www.youtube.com/embed/dQw4w9WgXcQ', 'https://img.youtube.com/vi/dQw4w9WgXcQ/hqdefault.jpg', 'https://example.com/materials/childcare-support.pdf', '伊藤恵子', true, 82),
+  ('v007', 'AI技術の基礎', '人工知能の基本的な概念と日常生活での活用について学びます。', 3600, 2024, 'AI', ARRAY['一般', '技術'], 'https://www.youtube.com/embed/dQw4w9WgXcQ', 'https://img.youtube.com/vi/dQw4w9WgXcQ/hqdefault.jpg', 'https://example.com/materials/ai-basics.pdf', '渡辺智子', true, 90),
+  ('v008', '地域経済の現状', '長野市の経済状況と今後の展望について分析します。', 4800, 2024, 'その他', ARRAY['一般', '経済'], 'https://www.youtube.com/embed/dQw4w9WgXcQ', 'https://img.youtube.com/vi/dQw4w9WgXcQ/hqdefault.jpg', 'https://example.com/materials/economy.pdf', '中村達也', true, 75),
+  ('v009', '交通安全講座', '自転車や自動車の安全な利用方法について学びます。', 3000, 2023, '安全', ARRAY['一般', '交通'], 'https://www.youtube.com/embed/dQw4w9WgXcQ', 'https://img.youtube.com/vi/dQw4w9WgXcQ/hqdefault.jpg', 'https://example.com/materials/traffic-safety.pdf', '小林正男', true, 80),
+  ('v010', '地域ボランティア入門', '地域貢献活動への参加方法と意義について説明します。', 2100, 2023, 'その他', ARRAY['一般', 'ボランティア'], 'https://www.youtube.com/embed/dQw4w9WgXcQ', 'https://img.youtube.com/vi/dQw4w9WgXcQ/hqdefault.jpg', 'https://example.com/materials/volunteer.pdf', '加藤由美', true, 73);
