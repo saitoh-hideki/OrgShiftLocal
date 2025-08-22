@@ -17,7 +17,7 @@ export default function AiNavigator() {
     {
       id: '1',
       type: 'ai',
-      content: 'こんにちは！地域のサービスや制度について、何でもお気軽にお聞きください。\n\n例：\n• ごみの分別方法\n• 図書館の開館時間\n• 防災訓練の日程\n• 子育て支援制度',
+      content: 'こんにちは！地域のサービスや制度について、何でもお気軽にお聞きください。\n\n例：\n• 今月の学びは？\n• 学習講座の情報\n• 動画で学べる内容\n• クイズに挑戦したい\n• ごみの分別方法\n• 図書館の開館時間\n• 防災訓練の日程\n• 子育て支援制度',
       timestamp: new Date()
     }
   ])
@@ -28,6 +28,12 @@ export default function AiNavigator() {
   const chatContainerRef = useRef<HTMLDivElement>(null)
 
   const suggestions = [
+    '今月の学びは？',
+    '学習講座の情報',
+    '動画で学べる内容',
+    'クイズに挑戦したい',
+    '補助金・支援制度',
+    'デジタルサービス',
     'ごみの分別方法',
     '図書館の開館時間',
     '防災訓練の日程',
