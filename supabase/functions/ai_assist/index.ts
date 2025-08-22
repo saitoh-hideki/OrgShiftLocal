@@ -206,11 +206,28 @@ async function fetchAllDatabaseData(supabase: any) {
       console.log('❌ Links error:', linksError)
     }
 
+    // 5. 長野localニュース（全て取得）
+    console.log('📰 Fetching news...')
+    const { data: news, error: newsError } = await supabase
+      .from('news')
+      .select('*')
+      .eq('is_published', true)
+      .order('published_at', { ascending: false })
+      .limit(10)
+    
+    if (!newsError && news) {
+      allData.news = news
+      console.log('✅ News:', news.length)
+    } else {
+      console.log('❌ News error:', newsError)
+    }
+
     console.log('📊 Final data summary:', {
       learningContents: allData.learningContents?.length || 0,
       learningVideos: allData.learningVideos?.length || 0,
       quizzes: allData.quizzes?.length || 0,
-      links: allData.links?.length || 0
+      links: allData.links?.length || 0,
+      news: allData.news?.length || 0
     })
 
   } catch (error) {
@@ -252,6 +269,13 @@ function formatDatabaseDataForPrompt(allData: any): string {
     })
   }
 
+  if (allData.news && allData.news.length > 0) {
+    formattedData += '\n【長野localニュース】\n'
+    allData.news.forEach((newsItem: any) => {
+      formattedData += `- ${newsItem.title}: ${newsItem.summary || newsItem.content.substring(0, 100)}... (${newsItem.category}, ${newsItem.location}, ${newsItem.published_at})\n`
+    })
+  }
+
   if (!formattedData) {
     formattedData = '（データベースに関連する具体的な情報は見つかりませんでした）'
   }
@@ -283,13 +307,25 @@ async function generateSpecificResponse(query: string, allData: any): Promise<st
   if (lowercaseQuery.includes('クイズ') || lowercaseQuery.includes('問題') || lowercaseQuery.includes('テスト')) {
     return generateQuizResponse(allData)
   }
+
+  // ニュース・お知らせに関する質問の処理
+  if (lowercaseQuery.includes('ニュース') || lowercaseQuery.includes('お知らせ') || lowercaseQuery.includes('情報') ||
+      lowercaseQuery.includes('最近') || lowercaseQuery.includes('最新') || lowercaseQuery.includes('話題')) {
+    return generateNewsResponse(allData)
+  }
+
+  // 長野県・地域に関する質問の処理
+  if (lowercaseQuery.includes('長野') || lowercaseQuery.includes('地域') || lowercaseQuery.includes('市') ||
+      lowercaseQuery.includes('県') || lowercaseQuery.includes('地元')) {
+    return generateLocalNewsResponse(allData)
+  }
   
   // 挨拶への自然な応答
   if (lowercaseQuery.includes('こんにちは') || lowercaseQuery.includes('こんばんは') || 
       lowercaseQuery.includes('おはよう') || lowercaseQuery.includes('はじめまして')) {
     return `こんにちは！地域のサービスについて何でもお気軽にお聞きください。
 
-例えば、ごみの分別方法、図書館の利用案内、防災情報、子育て支援制度、学習コンテンツ、クイズ、補助金など、どんなことでもお答えします。
+例えば、ごみの分別方法、図書館の利用案内、防災情報、子育て支援制度、学習コンテンツ、クイズ、補助金、長野県の最新ニュースなど、どんなことでもお答えします。
 
 何か具体的に知りたいことはありますか？`
   }
@@ -307,7 +343,7 @@ ${dataInfo}
   // 一般的な応答
   return `「${query}」についてですね。
 
-地域のサービスや制度、学習コンテンツ、クイズ、補助金などについて、できる限りお答えします。もう少し具体的に教えていただけると、より詳しい情報をお伝えできます。
+地域のサービスや制度、学習コンテンツ、クイズ、補助金、長野県の最新ニュースなどについて、できる限りお答えします。もう少し具体的に教えていただけると、より詳しい情報をお伝えできます。
 
 例えば：
 • ごみ分別について知りたい
@@ -317,6 +353,8 @@ ${dataInfo}
 • 学習講座の情報が知りたい
 • クイズに挑戦したい
 • 補助金について調べたい
+• 長野県の最新ニュースが知りたい
+• 地域の話題について教えて
 
 どんなことでも、お気軽にお聞きください！`
 }
@@ -462,6 +500,56 @@ function generateQuizResponse(allData: any): string {
   return response
 }
 
+// ニュース・お知らせに関する具体的な応答を生成
+function generateNewsResponse(allData: any): string {
+  let response = '📰 長野県の最新ニュースについてですね！\n\n'
+  
+  if (allData.news && allData.news.length > 0) {
+    response += '【長野県の最新ニュース】\n'
+    allData.news.slice(0, 5).forEach((newsItem: any) => {
+      response += `• ${newsItem.title}\n`
+      response += `  📝 ${newsItem.summary || newsItem.content.substring(0, 100)}...\n`
+      response += `  🏷️ ${newsItem.category}\n`
+      response += `  📍 ${newsItem.location}\n`
+      response += `  📅 ${newsItem.published_at}\n\n`
+    })
+    
+    if (allData.news.length > 5) {
+      response += `他にも${allData.news.length - 5}件のニュースがあります。\n`
+    }
+  } else {
+    response += '現在、長野県の最新ニュースの情報が見つかりませんでした。\n'
+    response += '長野県の公式サイトや、地域のニュースサイトをチェックしてみることをおすすめします！'
+  }
+  
+  return response
+}
+
+// 長野県・地域に関する具体的な応答を生成
+function generateLocalNewsResponse(allData: any): string {
+  let response = '🏠 長野県の地域についてですね！\n\n'
+  
+  if (allData.news && allData.news.length > 0) {
+    response += '【長野県の地域情報】\n'
+    allData.news.slice(0, 5).forEach((newsItem: any) => {
+      response += `• ${newsItem.title}\n`
+      response += `  📝 ${newsItem.summary || newsItem.content.substring(0, 100)}...\n`
+      response += `  🏷️ ${newsItem.category}\n`
+      response += `  📍 ${newsItem.location}\n`
+      response += `  📅 ${newsItem.published_at}\n\n`
+    })
+    
+    if (allData.news.length > 5) {
+      response += `他にも${allData.news.length - 5}件の地域情報があります。\n`
+    }
+  } else {
+    response += '現在、長野県の地域情報の情報が見つかりませんでした。\n'
+    response += '長野県の公式サイトや、地域のニュースサイトをチェックしてみることをおすすめします！'
+  }
+  
+  return response
+}
+
 // 表示用にデータをフォーマット
 function formatDatabaseDataForDisplay(allData: any): string {
   let formattedData = ''
@@ -494,6 +582,14 @@ function formatDatabaseDataForDisplay(allData: any): string {
     formattedData += '📋 行政サービス・リンク\n'
     allData.links.forEach((link: any) => {
       formattedData += `• ${link.title}: ${link.description || '説明なし'}\n`
+    })
+    formattedData += '\n'
+  }
+
+  if (allData.news && allData.news.length > 0) {
+    formattedData += '📰 長野localニュース\n'
+    allData.news.forEach((newsItem: any) => {
+      formattedData += `• ${newsItem.title}: ${newsItem.summary || newsItem.content.substring(0, 100)}... (${newsItem.category}, ${newsItem.location})\n`
     })
     formattedData += '\n'
   }
@@ -581,16 +677,23 @@ async function getDebugInfo(supabase: any) {
       .select('*')
       .limit(5)
 
+    const { data: news, error: newsError } = await supabase
+      .from('news')
+      .select('*')
+      .limit(5)
+
     return {
       learningContents: learningContents || [],
       learningVideos: learningVideos || [],
       quizzes: quizzes || [],
       links: links || [],
+      news: news || [],
       errors: {
         learningContents: learningError,
         learningVideos: videosError,
         quizzes: quizzesError,
-        links: linksError
+        links: linksError,
+        news: newsError
       }
     }
   } catch (error) {
